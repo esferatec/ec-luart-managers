@@ -1,7 +1,7 @@
 -- Require necessary modules for UI, Geometry Manager, and Key Manager
 local ui = require("ui")
-local gm = require("calculator.gm")
-local km = require("calculator.km")
+local gm = require("calculator.ecluart.gm")
+local km = require("calculator.ecluart.km")
 
 -- Create a new window for the calculator with specified dimensions
 local win = ui.Window("ecCalculator", "dialog", 300, 380)

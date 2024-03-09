@@ -1,5 +1,5 @@
-local MatrixLayout = require("calculator.layouts.matrixlayout")
-local SingleLayout = require("calculator.layouts.singlelayout")
+local MatrixLayout = require("calculator.ecluart.layouts.matrixlayout")
+local SingleLayout = require("calculator.ecluart.layouts.singlelayout")
 
 -- Defines a geometry management module.
 local gm = {}
