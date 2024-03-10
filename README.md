@@ -5,6 +5,7 @@ This repository provides an overview of my self-programmed managers for easy dev
 | Repository  | Description |
 | --- | --- |
 | [ec-luart-keymanager](https://github.com/esferatec/ec-luart-keymanager) | The project is a key management module written in Lua. It defines a KeyManager object that handles key gestures in LuaRT desktop applications. |
+| [ec-luart-widgetmanager](https://github.com/esferatec/ec-luart-widgetmanager) |The project is a widget management module written in Lua. It defines a WidgetManager object that contains methods for managing widgets in LuaRT desktop applications. |
 
 ## License
 
