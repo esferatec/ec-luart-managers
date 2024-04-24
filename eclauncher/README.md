@@ -1,4 +1,4 @@
-# ecLauncer
+# ecLauncher
 
 This is a launcher application for the other applications in this repository. It shows the capabilities of the different managers of this repository.
 
