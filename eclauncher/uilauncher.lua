@@ -1,21 +1,27 @@
 local ui     = require("ui")
-local cm     = require("manager.cm") -- configuration manager
-local gm     = require("manager.gm") -- geometry manager
-local km     = require("manager.km") -- key manager
-local lm     = require("manager.lm") -- localization manager
-local mm     = require("manager.mm") -- menu manager
-local wm     = require("manager.wm") -- widget manager
+
+local cm     = require("managers.cm") -- configuration manager
+local gm     = require("managers.gm") -- geometry manager
+local km     = require("managers.km") -- key manager
+local lm     = require("managers.lm") -- localization manager
+local mm     = require("managers.mm") -- menu manager
+local wm     = require("managers.wm") -- widget manager
+
+--#region Menu
+
+local MenuBurger   = ui.Menu("English", "German", "", "Setup", "Help", "About", "", "Exit")
+
+--#endregion
 
 --#region Window
 
 local Window = ui.Window("ecLauncher", "dialog", 400, 320)
 Window.menu  = ui.Menu()
-local Menu   = ui.Menu("English", "German", "", "Help", "About", "", "Exit")
-Window.menu:add("|||", Menu)
+Window.menu:add("|||", MenuBurger)
 
 --#endregion
 
---#region WindowManagers
+--#region Managers
 
 Window.CM = cm.ConfigurationManager()
 Window.GM = gm.GeometryManager():MatrixLayout(Window, 4, 3, gm.RESIZE.Both, 10, 10, 10, 380, 280)
@@ -47,17 +53,6 @@ local ButtonApplication12 = ui.Button(Window, "12")
 --#region WidgetManager
 
 Window.WM:add(ButtonApplication01, "ButtonApplication01")
---Window.WM:add(ButtonApplication02, "ButtonApplication02")
---Window.WM:add(ButtonApplication03, "ButtonApplication03")
---Window.WM:add(ButtonApplication04, "ButtonApplication04")
---Window.WM:add(ButtonApplication05, "ButtonApplication05")
---Window.WM:add(ButtonApplication06, "ButtonApplication06")
---Window.WM:add(ButtonApplication07, "ButtonApplication07")
---Window.WM:add(ButtonApplication08, "ButtonApplication08")
---Window.WM:add(ButtonApplication09, "ButtonApplication09")
---Window.WM:add(ButtonApplication10, "ButtonApplication10")
---Window.WM:add(ButtonApplication11, "ButtonApplication11")
---Window.WM:add(ButtonApplication12, "ButtonApplication12")
 
 Window.WM_DISABLED:add(ButtonApplication02, "ButtonApplication02")
 Window.WM_DISABLED:add(ButtonApplication03, "ButtonApplication03")
@@ -75,11 +70,12 @@ Window.WM_DISABLED:add(ButtonApplication12, "ButtonApplication12")
 
 --#region MenuManager
 
-Window.MM:add(Menu.items[1], "MenuEnglish")
-Window.MM:add(Menu.items[2], "MenuGerman")
-Window.MM:add(Menu.items[4], "MenuHelp")
-Window.MM:add(Menu.items[5], "MenuAbout")
-Window.MM:add(Menu.items[7], "MenuExit")
+Window.MM:add(MenuBurger.items[1], "BurgerEnglish")
+Window.MM:add(MenuBurger.items[2], "BurgerGerman")
+Window.MM:add(MenuBurger.items[4], "BurgerSetup")
+Window.MM:add(MenuBurger.items[5], "BurgerHelp")
+Window.MM:add(MenuBurger.items[6], "BurgerAbout")
+Window.MM:add(MenuBurger.items[8], "BurgerExit")
 
 --#endregion
 
@@ -102,11 +98,12 @@ Window.KM:add(ButtonApplication12, "VK_F12")
 
 --#region LocalizationManager
 
-Window.LM:add(Menu.items[1], "text", "English")
-Window.LM:add(Menu.items[2], "text", "German")
-Window.LM:add(Menu.items[4], "text", "Help")
-Window.LM:add(Menu.items[5], "text", "About")
-Window.LM:add(Menu.items[7], "text", "Exit")
+Window.LM:add(MenuBurger.items[1], "text", "English")
+Window.LM:add(MenuBurger.items[2], "text", "German")
+Window.LM:add(MenuBurger.items[4], "text", "Setup")
+Window.LM:add(MenuBurger.items[5], "text", "Help")
+Window.LM:add(MenuBurger.items[6], "text", "About")
+Window.LM:add(MenuBurger.items[7], "text", "Exit")
 
 Window.LM:add(ButtonApplication01, "text", "Application01")
 Window.LM:add(ButtonApplication02, "text", "Application02")
@@ -142,8 +139,8 @@ Window.GM:add(ButtonApplication12)
 
 --#region ConfigurationManager
 
-Window.CM:add(Menu.items[1], "checked", "LanguageEnglish")
-Window.CM:add(Menu.items[2], "checked", "LanguageGerman")
+Window.CM:add(MenuBurger.items[1], "checked", "LanguageEnglish")
+Window.CM:add(MenuBurger.items[2], "checked", "LanguageGerman")
 
 --#endregion
 
