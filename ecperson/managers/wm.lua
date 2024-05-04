@@ -46,11 +46,11 @@ function WidgetManager:add(widget, name)
 
   self.children[name] = widget
 
-  if isNil(widget.zindex) then
-    widget.zindex = #self.zorder + 1
-  end
+  --if isNil(widget.zindex) then
+  -- widget.zindex = #self.zorder + 1
+  --end
 
-  table.insert(self.zorder, widget.zindex, widget)
+  --table.insert(self.zorder, widget.zindex, widget)
 end
 
 -- Reorders the widgets based on their zindex.

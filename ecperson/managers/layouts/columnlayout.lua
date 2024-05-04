@@ -1,18 +1,19 @@
-local bl = require("manager.layouts.baselayout")
+local bl = require("managers.layouts.baselayout")
 
--- Arranges child widgets into a single resizeable column.
--- Default alignment is "left".
--- local packlayout = {}
+-- Arranges child widgets into a single column.
+-- Default direction is "top" and default alignment is "left".
+-- local columnlayout = {}
 
 -- Defines specific constants.
+local DIRECTION = { Top = 1, Bottom = 2 }
 local ALIGNMENT = { Left = 1, Right = 2, Center = 3, Stretch = 4 }
 
--- Defines the pack layout object.
-local PackLayout = Object(bl.BaseLayout())
+-- Defines the column layout object.
+local ColumnLayout = Object(bl.BaseLayout())
 
 -- Adds a child widget.
--- add(widget: object, gap?:number, alignment?[Left, Right, Center, Strecht]: number) -> none
-function PackLayout:add(widget, gap, alignment)
+-- add(widget: object, alignment?[Left, Right, Center, Strecht]: number) -> none
+function ColumnLayout:add(widget, alignment)
   if not bl.isvalidchild(widget) then return end
 
   -- validates alignment parameter and sets default value
@@ -26,8 +27,12 @@ function PackLayout:add(widget, gap, alignment)
   newWidget.height = widget.height
   newWidget.positionx = self.nextx
   newWidget.positiony = self.nexty
-  newWidget.gap = gap or 0
   newWidget.alignment = alignment
+
+  -- overwrites current values if direction is "bottom"
+  if self.direction == DIRECTION.Bottom then
+    newWidget.positiony = self.nexty - newWidget.height
+  end
 
   -- overwrites current values if alignemt is "right"
   if newWidget.alignment == ALIGNMENT.Right then
@@ -44,34 +49,46 @@ function PackLayout:add(widget, gap, alignment)
     newWidget.width = self.width
   end
 
-  self.nexty = self.nexty + newWidget.height + newWidget.gap
+  -- sets current values for the next widget
+  if self.direction == DIRECTION.Bottom then
+    self.nexty = self.nexty - newWidget.height - self.gap
+  else
+    self.nexty = self.nexty + newWidget.height + self.gap
+  end
 
   table.insert(self.children, newWidget)
 end
 
 -- Updates all child widgets.
 -- update() -> none
-function PackLayout:update()
-  if not self.resize then return end
+function ColumnLayout:update()
+  local heightDifference = 0
 
-  local widthDifference = 0
+  -- overwrites default values if direction is "bottom"
+  if self.direction == DIRECTION.Bottom then
+    heightDifference = self.parent.height - self.parentheight
+  end
 
-  widthDifference = self.parent.width - self.parentwidth
-  
   for _, child in pairs(self.children) do
-    child.widget.width = child.width + widthDifference
+    child.widget.x = child.positionx
+    child.widget.y = child.positiony + heightDifference
   end
 end
 
--- Creates the pack layout constructor.
-function PackLayout:constructor(parent, resize, positionx, positiony, width, heigth)
+-- Creates the column layout constructor.
+function ColumnLayout:constructor(parent, direction, gap, positionx, positiony, width, heigth)
   assert(bl.isvalidparent(parent), bl.ERRORMESSAGE.notvalidparent)
+
+  -- validates parameter values and sets default values
+  if direction == nil then direction = DIRECTION.Top end
+  if direction > 2 then direction = DIRECTION.Top end
 
   self.parent = parent
   self.parentwidth = parent.width
   self.parentheight = parent.height
   self.children = {}
-  self.resize = resize or false
+  self.direction = direction
+  self.gap = gap or 0
   self.positionx = positionx or 0
   self.positiony = positiony or 0
   self.width = width or (self.parentwidth - self.positionx)
@@ -82,6 +99,11 @@ function PackLayout:constructor(parent, resize, positionx, positiony, width, hei
   self.endy = self.height
   self.nextx = self.startx
   self.nexty = self.starty
+
+  -- overwrites default values if direction is "bottom"
+  if self.direction == DIRECTION.Bottom then
+    self.nexty = self.endy
+  end
 end
 
-return PackLayout
+return ColumnLayout

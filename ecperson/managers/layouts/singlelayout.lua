@@ -1,4 +1,4 @@
-local bl = require("manager.layouts.baselayout")
+local bl = require("managers.layouts.baselayout")
 
 -- Places a single child widget at the given position.
 -- Default resize is "none".

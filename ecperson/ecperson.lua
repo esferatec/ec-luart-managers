@@ -1,51 +1,25 @@
-require("common.extension")
-
-local ui = require("ui")
-local sys = require("sys")
+local ui   = require("ui")
+local sys  = require("sys")
 local json = require("json")
 
-local db = require("resource.person")
-local app = require("resource.application")
+local app  = require("resources.app")
 
-app.FOLDER = sys.File(arg[-1]).path
-app.DATABSEFILE = arg[1]
-app.SETTINGFILE = sys.File(app.FOLDER .. "\\ecperson.json")
+if not app.SETTINGS.file.exists then
+  local saved, message = pcall(json.save, app.SETTINGS.file, app.SETTINGS.default)
 
-if app.DATABSEFILE ~= nil and string.find(app.DATABSEFILE, ".person") == nil then
-  ui.error("This file type ist not supported.", app.NAME)
-  sys.exit()
+  if not saved then
+    ui.info(message, app.NAME)
+  end
 end
 
-if app.DATABSEFILE == nil then
-  local newDatabase = ui.savedialog("", false, "Person (*.person)|*.person")
-
-  if newDatabase == nil then
-    ui.info("")
+if app.ARGUMENT then
+  if not string.find(app.ARGUMENT, app.DATABASE.type) then
+    ui.error("This file type is not supported.", app.NAME)
     sys.exit()
   end
-
-  if newDatabase ~= nil then
-    db:save(newDatabase.fullpath)
-  end
 end
 
---if not SETTINGFILE.exists then
---  local default = {
---    MenuAPPLICATIONEnglish = true,
---    MenuAPPLICATIONGerman = false,
---    MenuSortSequenceASC = true,
---    MenuShowAllTasks = true
---  }
-
--- local success, message = pcall(json.save, SETTINGFILE, default)
-
--- if not success then
---   ui.info(message, APPLICATION)
--- end
---end
-
---dofile(embed.File("cbmain.lua").fullpath)
-dofile("cbmain.lua")
+dofile(embed and embed.File("cbperson.lua").fullpath or "cbperson.lua")
 
 if sys.error then
   ui.error(sys.error, app.NAME)

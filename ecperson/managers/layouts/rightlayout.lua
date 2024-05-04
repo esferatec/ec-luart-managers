@@ -1,25 +1,25 @@
-local bl = require("manager.layouts.baselayout")
+local bl = require("managers.layouts.baselayout")
 
--- Arranges child widgets into a single column.
--- Default direction is "top" and default alignment is "left".
--- local columnlayout = {}
+-- Arranges child widgets into a single column on the right border.
+-- Default direction is "top" and default alignment is "right".
+-- local rightlayout = {}
 
 -- Defines specific constants.
 local DIRECTION = { Top = 1, Bottom = 2 }
-local ALIGNMENT = { Left = 1, Right = 2, Center = 3, Stretch = 4 }
+local ALIGNMENT = { Left = 1, Right = 2, Center = 3 }
 
--- Defines the column layout object.
-local ColumnLayout = Object(bl.BaseLayout())
+-- Defines the left layout object.
+local RightLayout = Object(bl.BaseLayout())
 
 -- Adds a child widget.
--- add(widget: object, alignment?[Left, Right, Center, Strecht]: number) -> none
-function ColumnLayout:add(widget, alignment)
+-- add(widget: object, alignment?[Left, Right, Center]: number) -> none
+function RightLayout:add(widget, alignment)
   if not bl.isvalidchild(widget) then return end
 
   -- validates alignment parameter and sets default value
-  if alignment == nil then alignment = ALIGNMENT.Left end
-  if type(alignment) ~= "number" then alignment = ALIGNMENT.Left end
-  if alignment > 4 then alignment = ALIGNMENT.Left end
+  if alignment == nil then alignment = ALIGNMENT.Right end
+  if type(alignment) ~= "number" then alignment = ALIGNMENT.Right end
+  if alignment > 3 then alignment = ALIGNMENT.Right end
 
   local newWidget = {}
   newWidget.widget = widget
@@ -44,11 +44,6 @@ function ColumnLayout:add(widget, alignment)
     newWidget.positionx = self.nextx + (self.width * 0.5) - (newWidget.width * 0.5)
   end
 
-  -- overwrites current values if alignemt is "stretch"
-  if newWidget.alignment == ALIGNMENT.Stretch then
-    newWidget.width = self.width
-  end
-
   -- sets current values for the next widget
   if self.direction == DIRECTION.Bottom then
     self.nexty = self.nexty - newWidget.height - self.gap
@@ -61,7 +56,7 @@ end
 
 -- Updates all child widgets.
 -- update() -> none
-function ColumnLayout:update()
+function RightLayout:update()
   local heightDifference = 0
 
   -- overwrites default values if direction is "bottom"
@@ -69,19 +64,23 @@ function ColumnLayout:update()
     heightDifference = self.parent.height - self.parentheight
   end
 
+  local widthDifference = self.parent.width - self.parentwidth
+
   for _, child in pairs(self.children) do
-    child.widget.x = child.positionx
+    child.widget.x = child.positionx + widthDifference
     child.widget.y = child.positiony + heightDifference
   end
 end
 
--- Creates the column layout constructor.
-function ColumnLayout:constructor(parent, direction, gap, positionx, positiony, width, heigth)
+-- Creates the right layout constructor.
+function RightLayout:constructor(parent, direction, gap, margin, width)
   assert(bl.isvalidparent(parent), bl.ERRORMESSAGE.notvalidparent)
 
   -- validates parameter values and sets default values
   if direction == nil then direction = DIRECTION.Top end
   if direction > 2 then direction = DIRECTION.Top end
+  if margin == nil then margin = { 0, 0, 0, 0 } end
+  if type(margin) == "number" then margin = { margin, margin, margin, margin } end
 
   self.parent = parent
   self.parentwidth = parent.width
@@ -89,14 +88,15 @@ function ColumnLayout:constructor(parent, direction, gap, positionx, positiony, 
   self.children = {}
   self.direction = direction
   self.gap = gap or 0
-  self.positionx = positionx or 0
-  self.positiony = positiony or 0
-  self.width = width or (self.parentwidth - self.positionx)
-  self.height = heigth or (self.parentheight - self.positiony)
-  self.startx = self.positionx
-  self.starty = self.positiony
-  self.endx = self.width
-  self.endy = self.height
+  self.marginleft = margin[1] or 0
+  self.marginright = margin[2] or 0
+  self.margintop = margin[3] or 0
+  self.marginbottom = margin[4] or 0
+  self.width = width or (self.parentwidth - self.marginright - self.marginleft)
+  self.startx = self.parentwidth - self.marginleft - self.width
+  self.starty = 0 + self.margintop
+  self.endx = self.startx + self.width
+  self.endy = self.parentheight - self.marginbottom
   self.nextx = self.startx
   self.nexty = self.starty
 
@@ -106,4 +106,4 @@ function ColumnLayout:constructor(parent, direction, gap, positionx, positiony, 
   end
 end
 
-return ColumnLayout
+return RightLayout

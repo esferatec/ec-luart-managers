@@ -167,8 +167,7 @@ function win:onKey(key)
 end
 
 function win:onHide()
-  win.CM:update("LanguageEnglish", win.MM.children.BurgerEnglish.checked)
-  win.CM:update("LanguageGerman", win.MM.children.BurgerGerman.checked)
+  win.CM:save()
 
   local saved, message = pcall(json.save, app.SETTINGS.file, win.CM.settings)
 

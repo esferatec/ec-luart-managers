@@ -1,4 +1,4 @@
-local bl = require("manager.layouts.baselayout")
+local bl = require("managers.layouts.baselayout")
 
 -- Places child widgets at the given relative position.
 -- Default anchor is "topleft".

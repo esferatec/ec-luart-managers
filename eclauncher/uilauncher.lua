@@ -1,15 +1,15 @@
-local ui     = require("ui")
+local ui = require("ui")
 
-local cm     = require("managers.cm") -- configuration manager
-local gm     = require("managers.gm") -- geometry manager
-local km     = require("managers.km") -- key manager
-local lm     = require("managers.lm") -- localization manager
-local mm     = require("managers.mm") -- menu manager
-local wm     = require("managers.wm") -- widget manager
+local cm = require("managers.cm") -- configuration manager
+local gm = require("managers.gm") -- geometry manager
+local km = require("managers.km") -- key manager
+local lm = require("managers.lm") -- localization manager
+local mm = require("managers.mm") -- menu manager
+local wm = require("managers.wm") -- widget manager
 
 --#region Menu
 
-local MenuBurger   = ui.Menu("English", "German", "", "Setup", "Help", "About", "", "Exit")
+local MenuBurger = ui.Menu("English", "German", "", "Setup", "Help", "About", "", "Exit")
 
 --#endregion
 

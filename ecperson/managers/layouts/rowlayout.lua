@@ -1,25 +1,25 @@
-local bl = require("manager.layouts.baselayout")
+local bl = require("managers.layouts.baselayout")
 
--- Arranges child widgets into a single row on the top border.
+-- Arranges child widgets into a single line row.
 -- Default direction is "left" and default alignment is "top".
--- local toplayout = {}
+-- local rowlayout = {}
 
--- Defines specific constants.
-local DIRECTION = { Left = 1, Right = 2 }
-local ALIGNMENT = { Top = 1, Bottom = 2, Center = 3 }
+-- Defines specific constants
+DIRECTION = { Left = 1, Right = 2 }
+ALIGNMENT = { Top = 1, Bottom = 2, Center = 3, Stretch = 4 }
 
--- Defines the top layout object.
-local TopLayout = Object(bl.BaseLayout())
+-- Defines the metatable.
+local RowLayout = Object(bl.BaseLayout())
 
 -- Adds a child widget.
--- add(widget: object, alignment?[Top, Bottom, Center]: number) -> none
-function TopLayout:add(widget, alignment)
+-- add(widget: object, alignment?[Top. Bottom, Center, Strecht]: number) -> none
+function RowLayout:add(widget, alignment)
   if not bl.isvalidchild(widget) then return end
 
   -- validates alignment parameter and sets default value
   if alignment == nil then alignment = ALIGNMENT.Top end
   if type(alignment) ~= "number" then alignment = ALIGNMENT.Top end
-  if alignment > 3 then alignment = ALIGNMENT.Top end
+  if alignment > 4 then alignment = ALIGNMENT.Top end
 
   local newWidget = {}
   newWidget.widget = widget
@@ -44,6 +44,11 @@ function TopLayout:add(widget, alignment)
     newWidget.positiony = self.nexty + (self.height * 0.5) - (newWidget.height * 0.5)
   end
 
+  -- overwrites current values if alignemt is "stretch"
+  if newWidget.alignment == ALIGNMENT.Stretch then
+    newWidget.height = self.height
+  end
+
   -- sets current values for the next widget
   if self.direction == DIRECTION.Right then
     self.nextx = self.nextx - newWidget.width - self.gap
@@ -56,9 +61,10 @@ end
 
 -- Updates all child widgets.
 -- update() -> none
-function TopLayout:update()
+function RowLayout:update()
   local widthDifference = 0
 
+  -- overwrites default values if direction is "right"
   if self.direction == DIRECTION.Right then
     widthDifference = self.parent.width - self.parentwidth
   end
@@ -69,15 +75,13 @@ function TopLayout:update()
   end
 end
 
--- Creates the top layout constructor.
-function TopLayout:constructor(parent, direction, gap, margin, height)
+-- Creates the column layout constructor.
+function RowLayout:constructor(parent, direction, gap, positionx, positiony, width, heigth)
   assert(bl.isvalidparent(parent), bl.ERRORMESSAGE.notvalidparent)
 
   -- validates parameter values and sets default values
   if direction == nil then direction = DIRECTION.Left end
   if direction > 2 then direction = DIRECTION.Left end
-  if margin == nil then margin = { 0, 0, 0, 0 } end
-  if type(margin) == "number" then margin = { margin, margin, margin, margin } end
 
   self.parent = parent
   self.parentwidth = parent.width
@@ -85,15 +89,14 @@ function TopLayout:constructor(parent, direction, gap, margin, height)
   self.children = {}
   self.direction = direction
   self.gap = gap or 0
-  self.marginleft = margin[1] or 0
-  self.marginright = margin[2] or 0
-  self.margintop = margin[3] or 0
-  self.marginbottom = margin[4] or 0
-  self.height = height or (self.parentheight - self.marginbottom - self.margintop)
-  self.startx = 0 + self.marginleft
-  self.starty = 0 + self.margintop
-  self.endx = self.parentwidth - self.marginright
-  self.endy = self.height + self.margintop
+  self.positionx = positionx or 0
+  self.positiony = positiony or 0
+  self.width = width or (self.parentwidth - self.positionx)
+  self.height = heigth or (self.parentheight - self.positiony)
+  self.startx = self.positionx
+  self.starty = self.positiony
+  self.endx = self.width
+  self.endy = self.height
   self.nextx = self.startx
   self.nexty = self.starty
 
@@ -103,4 +106,4 @@ function TopLayout:constructor(parent, direction, gap, margin, height)
   end
 end
 
-return TopLayout
+return RowLayout

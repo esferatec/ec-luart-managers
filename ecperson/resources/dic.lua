@@ -1,8 +1,9 @@
-local translations = {}
+local dic = {}
 
-translations.English_United_States = "English_United States"
-translations.english = {
+dic.English_United_States = "English_United States"
+dic.english = {
   ["About"] = "About",
+  ["Action"] = "Please select an option below:",
   ["Cancel"] = "Cancel",
   ["City"] = "City",
   ["Company"] = "Company",
@@ -10,27 +11,39 @@ translations.english = {
   ["Delete"] = "Delete",
   ["Department"] = "Department",
   ["Edit"] = "Edit",
+  ["English"] = "English",
   ["Exit"] = "Exit",
+  ["FileTypeUnknown"] = "This file type is not supported.",
   ["Filter"] = "Filter",
   ["FirstPage"] = "First Page",
   ["FirtsName"] = "First Name",
+  ["German"] = "German",
   ["Help"] = "Help",
   ["LastName"] = "Last Name",
   ["LastNameRequired"] = "Please enter the last name.",
   ["LastPage"] = "LastPage",
-  ["MiddleName"] = "Middle name",
+  ["MiddleName"] = "Middle Name",
   ["New"] = "New",
   ["NextPage"] = "Next Page",
+  ["OK"] = "OK",
   ["PostalCode"] = "Postal Code",
   ["PreviousPage"] = "Previous Page",
   ["Save"] = "Save",
+  ["Setup"] = "Setup",
   ["State"] = "State",
   ["Street"] = "Street",
   ["Warning"] = "Warning",
+  ["Options"] = {
+    "create startmenu shortcut",
+    "create desktop shortcut",
+    "delete startmenu shortcut",
+    "delete desktop shortcut" },
 }
-translations.German_Germany = "German_Germany"
-translations.german = {
+
+dic.German_Germany = "German_Germany"
+dic.german = {
   ["About"] = "Info",
+  ["Action"] = "Bitte wählen Sie eine der folgenden Optionen",
   ["Cancel"] = "Abbrechen",
   ["City"] = "Ort",
   ["Company"] = "Firma",
@@ -38,10 +51,13 @@ translations.german = {
   ["Delete"] = "Löschen",
   ["Department"] = "Abteilung",
   ["Edit"] = "Bearbeiten",
+  ["English"] = "Englisch",
   ["Exit"] = "Beenden",
+  ["FileTypeUnknown"] = "Dieser Dateityp wird nicht unterstützt.",
   ["Filter"] = "Filter",
   ["FirstName"] = "Vorname",
   ["FirstPage"] = "Erste Seite",
+  ["German"] = "Deutsch",
   ["Help"] = "Hilfe",
   ["LastName"] = "Nachname",
   ["LastNameRequired"] = "Bitte geben Sie den Nachnamen ein.",
@@ -49,12 +65,19 @@ translations.german = {
   ["MiddleName"] = "Mittelname",
   ["New"] = "Neu",
   ["NextPage"] = "Nächste Seite",
+  ["OK"] = "OK",
   ["PostalCode"] = "Postleitzahl",
   ["PreviousPage"] = "Nächste Seite",
   ["Save"] = "Speichern",
+  ["Setup"] = "Einrichten",
   ["State"] = "Region",
   ["Street"] = "Straße",
   ["Warning"] = "Warnung",
+  ["Options"] = {
+    "Startmenü-Verknüpfung erstellen",
+    "Desktop-Verknüpfung erstellen",
+    "Startmenü-Verknüpfung löschen",
+    "Desktop-Verknüpfung löschen" },
 }
 
-return translations
+return dic

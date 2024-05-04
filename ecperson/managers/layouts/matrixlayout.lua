@@ -1,4 +1,4 @@
-local bl = require("manager.layouts.baselayout")
+local bl = require("managers.layouts.baselayout")
  
 -- Arranges child widgets into a given matix.
 -- Default resize is "none".

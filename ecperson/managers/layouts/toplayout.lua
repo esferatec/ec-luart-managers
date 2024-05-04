@@ -1,25 +1,25 @@
-local bl = require("manager.layouts.baselayout")
+local bl = require("managers.layouts.baselayout")
 
--- Arranges child widgets into a single row on the bottom border.
--- Default direction is "left" and default alignment is "bottom".
--- local bottomlayout = {}
+-- Arranges child widgets into a single row on the top border.
+-- Default direction is "left" and default alignment is "top".
+-- local toplayout = {}
 
 -- Defines specific constants.
 local DIRECTION = { Left = 1, Right = 2 }
 local ALIGNMENT = { Top = 1, Bottom = 2, Center = 3 }
 
--- Defines the bottom layout object.
-local BottomLayout = Object(bl.BaseLayout())
+-- Defines the top layout object.
+local TopLayout = Object(bl.BaseLayout())
 
 -- Adds a child widget.
--- add(widget: object, alignment?: number) -> none
-function BottomLayout:add(widget, alignment)
+-- add(widget: object, alignment?[Top, Bottom, Center]: number) -> none
+function TopLayout:add(widget, alignment)
   if not bl.isvalidchild(widget) then return end
 
   -- validates alignment parameter and sets default value
-  if alignment == nil then alignment = ALIGNMENT.Bottom end
-  if type(alignment) ~= "number" then alignment = ALIGNMENT.Bottom end
-  if alignment > 3 then alignment = ALIGNMENT.Bottom end
+  if alignment == nil then alignment = ALIGNMENT.Top end
+  if type(alignment) ~= "number" then alignment = ALIGNMENT.Top end
+  if alignment > 3 then alignment = ALIGNMENT.Top end
 
   local newWidget = {}
   newWidget.widget = widget
@@ -56,24 +56,21 @@ end
 
 -- Updates all child widgets.
 -- update() -> none
-function BottomLayout:update()
+function TopLayout:update()
   local widthDifference = 0
 
-  -- overwrites default values if direction is "right"
   if self.direction == DIRECTION.Right then
     widthDifference = self.parent.width - self.parentwidth
   end
 
-  local heightDifference = self.parent.height - self.parentheight
-
   for _, child in pairs(self.children) do
     child.widget.x = child.positionx + widthDifference
-    child.widget.y = child.positiony + heightDifference
+    child.widget.y = child.positiony
   end
 end
 
--- Creates the bottom layout constructor.
-function BottomLayout:constructor(parent, direction, gap, margin, height)
+-- Creates the top layout constructor.
+function TopLayout:constructor(parent, direction, gap, margin, height)
   assert(bl.isvalidparent(parent), bl.ERRORMESSAGE.notvalidparent)
 
   -- validates parameter values and sets default values
@@ -94,9 +91,9 @@ function BottomLayout:constructor(parent, direction, gap, margin, height)
   self.marginbottom = margin[4] or 0
   self.height = height or (self.parentheight - self.marginbottom - self.margintop)
   self.startx = 0 + self.marginleft
-  self.starty = self.parentheight - self.marginbottom - self.height
+  self.starty = 0 + self.margintop
   self.endx = self.parentwidth - self.marginright
-  self.endy = self.starty + self.height
+  self.endy = self.height + self.margintop
   self.nextx = self.startx
   self.nexty = self.starty
 
@@ -106,4 +103,4 @@ function BottomLayout:constructor(parent, direction, gap, margin, height)
   end
 end
 
-return BottomLayout
+return TopLayout
