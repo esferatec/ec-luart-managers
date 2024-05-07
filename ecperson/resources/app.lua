@@ -24,8 +24,7 @@ app.SETTINGS = {
 }
 
 app.DATABASE = {
-  name = app.ARGUMENT or ":memory:",
-  file = sys.File(app.ARGUMENT or ""),
+  name = ":memory:",
   type = ".ecperson"
 }
 

@@ -9,7 +9,7 @@ local uidialogs    = require("modules.uidialogs")
 local app          = require("resources.app")
 local dic          = require("resources.dic")
 
---#region win initialization OK
+--#region win initialization
 
 local win          = require("uiperson")
 win:center()
@@ -17,14 +17,14 @@ win:status()
 
 --#endregion
 
---#region db initialization OK
+--#region db initialization
 
 local db = require("dbperson")
 db:create()
 
 --#endregion
 
---#region local functions OK
+--#region local functions
 
 local function updateDialogCaption()
   uidialogs.cancelcaption = win.LM:translate("Cancel")
@@ -40,9 +40,11 @@ function win:updatetitle()
 end
 
 function win:updatestatus()
+  self:status(" ")
+
   if db.record then
-    local t = win.DM.key or "#"
-    self:status(db.record .. " / " .. db.total .. " - " .. t)
+    local text = string.format(win.LM:translate("statustext"), db.record, db.total)
+    self:status(text)
   end
 end
 
@@ -52,11 +54,26 @@ function win:updatewidget()
   else
     win.WM_ZERO:enable()
   end
+
+  win.WM:focus("EntryLastName")
+end
+
+function win:updatedata() -- optimierung bei new, save, cancel
+  if db.total == 0 or db.record == nil then
+    db.record = nil
+    win.DM:clear()
+    return
+  end
+
+  if db.total ~= 0 and db.record ~= nil then
+    win.DM:select(db, db.table, db.record - 1)
+    return
+  end
 end
 
 --#endregion
 
---#region menu events OK
+--#region menu events
 
 function win.MM.children.BurgerEnglish:onClick()
   win.LM.dictionary = dic.english
@@ -68,7 +85,7 @@ function win.MM.children.BurgerEnglish:onClick()
   win.MM:uncheck()
   self.checked = true
 
-  win.WM:focus("EntryLastName")
+  win:updatestatus()
 end
 
 function win.MM.children.BurgerGerman:onClick()
@@ -81,13 +98,13 @@ function win.MM.children.BurgerGerman:onClick()
   win.MM:uncheck()
   self.checked = true
 
-  win.WM:focus("EntryLastName")
+  win:updatestatus()
 end
 
 function win.MM.children.BurgerSetup:onClick()
   local success, message = nil, nil
 
-  local title = app.TITLE .. " - " .. win.LM:translate("Setup")
+  local title = app.NAME .. " - " .. win.LM:translate("Setup")
 
   local index = uidialogs.choiceindexdialog(win, title, win.LM:translate("Action"), win.LM:translate("Options"))
 
@@ -108,7 +125,7 @@ function win.MM.children.BurgerSetup:onClick()
   end
 
   if index and not success then
-    ui.info(message, app.TITLE)
+    ui.info(message, app.NAME)
   end
 end
 
@@ -137,8 +154,9 @@ function win.WM.children.ButtonFirst:onClick()
   if not db.record then return end
 
   db.record = 1
-  win.DM:select(db, db.table, db.record - 1)
 
+  win:updatedata()
+  win:updatewidget()
   win:updatestatus()
 end
 
@@ -147,13 +165,27 @@ function win.WM.children.ButtonPrevious:onClick()
   if db.record <= 1 then return end
 
   db.record = db.record - 1
-  win.DM:select(db, db.table, db.record - 1)
 
+  win:updatedata()
+  win:updatewidget()
   win:updatestatus()
 end
 
 function win.WM.children.ButtonFilter:onClick()
-  ui.info("ok")
+  if not db.record then return end
+
+  local items = db:list()
+
+  local title = app.NAME .. " - " .. win.LM:translate("Goto")
+
+  local index = uidialogs.choiceindexdialog(win, title, win.LM:translate("Action"), items, nil, 400)
+
+  if index then
+    db.record = index
+
+    win:updatedata()
+    win:updatestatus()
+  end
 end
 
 function win.WM.children.ButtonNext:onClick()
@@ -161,8 +193,9 @@ function win.WM.children.ButtonNext:onClick()
   if db.record >= db.total then return end
 
   db.record = db.record + 1
-  win.DM:select(db, db.table, db.record - 1)
 
+  win:updatedata()
+  win:updatewidget()
   win:updatestatus()
 end
 
@@ -170,15 +203,18 @@ function win.WM.children.ButtonLast:onClick()
   if not db.record then return end
 
   db.record = db.total
-  win.DM:select(db, "tbl_person", db.record - 1)
 
+  win:updatedata()
+  win:updatewidget()
   win:updatestatus()
 end
 
 function win.WM.children.ButtonNew:onClick()
-  db.record = nil
-  win.DM:clear()
+  if not db.record then return end
 
+  db.record = nil
+
+  win:updatedata()
   win:updatewidget()
   win:updatestatus()
 end
@@ -186,68 +222,53 @@ end
 function win.WM.children.ButtonSave:onClick()
   win.VM:apply()
 
-  if win.VM.isvalid then
-    win.DM:apply()
-    win.DM:insert(db, db.table)
-    win.DM:selectlast(db, db.table)
-
-  else
-    local errorText = ""
+  if not win.VM.isvalid then
+    local message = ""
 
     for _, text in ipairs(win.VM.message) do
-      errorText = errorText .. win.LM:translate(text) .. "\n"
+      message = message .. win.LM:translate(text) .. "\n"
     end
 
-    ui.warn(errorText, app.NAME .. " - " .. win.LM:translate("Warning"))
+    ui.warn(message, app.NAME .. " - " .. win.LM:translate("Warning"))
+    return
   end
 
-    db.record = db:count()
-    db.total = db.record
+  if win.DM.key == -1 then
+    win.DM:insert(db, db.table)
 
-    win:updatestatus()
-    win:updatewidget()
+    db.total = db:count()
+    db.record = (db.total ~= 0 and db.total) or nil
+  else
+    win.DM:update(db, db.table)
+  end
 
+  win:updatedata()
+  win:updatewidget()
+  win:updatestatus()
+end
+
+function win.WM.children.ButtonCancel:onClick() -- überprüfen?
+  if win.DM.key == -1 then
+    db.record = 1
+  end
+
+  win:updatedata()
+  win:updatewidget()
+  win:updatestatus()
 end
 
 function win.WM.children.ButtonDelete:onClick()
   if not db.record then return end
 
   win.DM:delete(db, db.table)
-  --win.DM:update(db, db.table)
 
-  db.record = 2
-  win.DM.key = 2
-  win.DM:selectone(db, db.table)
+  db.total = db:count()
+  db.record = (db.total ~= 0 and 1) or nil
 
-  win:updatestatus()
+  win:updatedata()
   win:updatewidget()
+  win:updatestatus()
 end
-
---[[
-
-
-function win.WM.children.ButtonSave:onClick()
-  win.VM:apply()
-
-  if win.VM.isvalid then
-    --db:insert(win.WM_ENTRY.children.EntryTask.text)
-  else
-    local errorText = ""
-
-    for _, text in ipairs(win.VM.message) do
-      errorText = errorText .. win.LM:translate(text) .. "\n"
-    end
-
-    ui.warn(errorText, application.NAME .. " - " .. win.LM:translate("Warning"))
-  end
-end
-
-function win.WM.children.ButtonDelete:onClick()
-  --win.DM:apply()
-  win.DM:update(db, "tbl_person", 5)
-end
-
---]]
 
 --#endregion
 
@@ -288,15 +309,17 @@ function win:onShow()
   win.GM_LOCATION_ENTRY:apply()
   win.GM_CONTACT:apply()
   win.GM_NOTE:apply()
-  win.GM_MENU:apply()
+  win.GM_TOOL:apply()
   win.CM:apply()
   win.LM:apply()
 
+  db.total = db:count()
+  db.record = (db.total ~= 0 and 1) or nil
+
+  win:updatedata()
   win:updatetitle()
   win:updatestatus()
   win:updatewidget()
-
-  win.WM:focus("EntryLastName")
 end
 
 function win:onKey(key)
@@ -304,8 +327,7 @@ function win:onKey(key)
 end
 
 function win:onHide()
-  win.CM:update("LanguageEnglish", win.MM.children.BurgerEnglish.checked)
-  win.CM:update("LanguageGerman", win.MM.children.BurgerGerman.checked)
+  win.CM:save()
 
   local saved, message = pcall(json.save, app.SETTINGS.file, win.CM.settings)
 

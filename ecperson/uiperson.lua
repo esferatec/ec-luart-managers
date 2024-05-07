@@ -41,10 +41,10 @@ Window.DM                = dm.DataManager()
 Window.GM_CONTACT        = gm.GeometryManager():RowLayout(Window, gm.DIRECTION.Left, 8, 30, 185, 650, 135)
 Window.GM_LOCATION_ENTRY = gm.GeometryManager():ColumnLayout(Window, gm.DIRECTION.Top, 8, 460, 14, 220, 166)
 Window.GM_LOCATION_LABEL = gm.GeometryManager():ColumnLayout(Window, gm.DIRECTION.Top, 12, 370, 18, 80, 166)
-Window.GM_MENU           = gm.GeometryManager():BottomLayout(Window, gm.DIRECTION.Left, 8, { 29, 30, 10, 59 }, 34)
 Window.GM_NAME_ENTRY     = gm.GeometryManager():ColumnLayout(Window, gm.DIRECTION.Top, 8, 120, 14, 220, 166)
 Window.GM_NAME_LABEL     = gm.GeometryManager():ColumnLayout(Window, gm.DIRECTION.Top, 12, 30, 18, 80, 166)
 Window.GM_NOTE           = gm.GeometryManager():BottomLayout(Window, gm.DIRECTION.Left, 0, { 30, 30, 10, 111 }, 80)
+Window.GM_TOOL           = gm.GeometryManager():BottomLayout(Window, gm.DIRECTION.Left, 8, { 29, 30, 10, 59 }, 34)
 Window.KM                = km.KeyManager()
 Window.LM                = lm.LocalizationManager()
 Window.MM                = mm.MenuManager()
@@ -82,9 +82,7 @@ local EntryPostalCode    = ui.Entry(Panel, "", 0, 0, 220, 24)
 local EntryState         = ui.Entry(Panel, "", 0, 0, 220, 24)
 local EntryCountry       = ui.Entry(Panel, "", 0, 0, 220, 24)
 
-local ColumnContacts     = uiextension.ColumnPanel(Window, ui.Entry, 5, 6, 0, 0, 586, 110)
-local ColumnEdit         = uiextension.ColumnPanel(Window, ui.Button, 5, 4, 0, 0, 24, 110, "#")
-local ColumnDelete       = uiextension.ColumnPanel(Window, ui.Button, 5, 4, 0, 0, 24, 110, "X")
+local ColumnContacts     = uiextension.ColumnPanel(Window, ui.Entry, 5, 6, 0, 0, 650, 150)
 
 local EditNote           = ui.Edit(Window, "", 0, 0, 648, 150)
 
@@ -147,8 +145,8 @@ Window.KM:add(ButtonNext, "VK_NEXT")
 Window.KM:add(ButtonLast, "VK_END")
 Window.KM:add(ButtonNew, "VK_F3")
 Window.KM:add(ButtonSave, "VK_F4")
-Window.KM:add(ButtonDelete, "VK_F5")
-Window.KM:add(ButtonCancel, "VK_F6")
+Window.KM:add(ButtonCancel, "VK_F5")
+Window.KM:add(ButtonDelete, "VK_F6")
 
 --#endregion
 
@@ -172,11 +170,16 @@ Window.LM:add(LabelPostalCode, "text", "PostalCode")
 Window.LM:add(LabelState, "text", "State")
 Window.LM:add(LabelCountry, "text", "Country")
 
-Window.LM:add(ButtonFirst, "tooltip", "FirstPage")
-Window.LM:add(ButtonPrevious, "tooltip", "PreviousPage")
-Window.LM:add(ButtonFilter, "tooltip", "Filter")
-Window.LM:add(ButtonNext, "tooltip", "NetxPage")
-Window.LM:add(ButtonLast, "tooltip", "LastPage")
+Window.LM:add(ButtonFirst, "tooltip", "FirstRecord")
+Window.LM:add(ButtonPrevious, "tooltip", "PreviousRecord")
+Window.LM:add(ButtonFilter, "tooltip", "FilterRecord")
+Window.LM:add(ButtonNext, "tooltip", "NextRecord")
+Window.LM:add(ButtonLast, "tooltip", "LastRecord")
+Window.LM:add(ButtonNew, "tooltip", "NewRecord")
+Window.LM:add(ButtonSave, "tooltip", "SaveRecord")
+Window.LM:add(ButtonCancel, "tooltip", "CancelRecord")
+Window.LM:add(ButtonDelete, "tooltip", "DeleteRecord")
+
 Window.LM:add(ButtonNew, "text", "New")
 Window.LM:add(ButtonSave, "text", "Save")
 Window.LM:add(ButtonDelete, "text", "Delete")
@@ -219,8 +222,6 @@ Window.GM_LOCATION_ENTRY:add(EntryCountry)
 --#region GeometryManager: CONTACT
 
 Window.GM_CONTACT:add(ColumnContacts)
-Window.GM_CONTACT:add(ColumnEdit)
-Window.GM_CONTACT:add(ColumnDelete)
 
 --#endregion
 
@@ -230,17 +231,17 @@ Window.GM_NOTE:add(EditNote)
 
 --#endregion
 
---#region GeometryManager: MENU (ÄNDERN)
+--#region GeometryManager: TOOL
 
-Window.GM_MENU:add(ButtonFirst)
-Window.GM_MENU:add(ButtonPrevious)
-Window.GM_MENU:add(ButtonFilter)
-Window.GM_MENU:add(ButtonNext)
-Window.GM_MENU:add(ButtonLast)
-Window.GM_MENU:add(ButtonNew)
-Window.GM_MENU:add(ButtonSave)
-Window.GM_MENU:add(ButtonCancel)
-Window.GM_MENU:add(ButtonDelete)
+Window.GM_TOOL:add(ButtonFirst)
+Window.GM_TOOL:add(ButtonPrevious)
+Window.GM_TOOL:add(ButtonFilter)
+Window.GM_TOOL:add(ButtonNext)
+Window.GM_TOOL:add(ButtonLast)
+Window.GM_TOOL:add(ButtonNew)
+Window.GM_TOOL:add(ButtonSave)
+Window.GM_TOOL:add(ButtonCancel)
+Window.GM_TOOL:add(ButtonDelete)
 
 --#endregion
 
@@ -268,7 +269,22 @@ Window.DM:add("street", EntryStreet, "text", "")
 Window.DM:add("city", EntryCity, "text", "")
 Window.DM:add("postalcode", EntryPostalCode, "text", "")
 Window.DM:add("state", EntryState, "text", "")
-Window.DM:add("country", EntryCountry, "text", "")
+Window.DM:add("country", EntryCountry, "text", "Deutschland")
+Window.DM:add("note", EditNote, "text", "")
+
+--#endregion
+
+--#region Events
+
+function ColumnContacts:onCreate()
+  super(self).onCreate(self)
+
+  Window.DM:add("contact1", ColumnContacts.items[1], "text", "")
+  Window.DM:add("contact2", ColumnContacts.items[2], "text", "")
+  Window.DM:add("contact3", ColumnContacts.items[3], "text", "")
+  Window.DM:add("contact4", ColumnContacts.items[4], "text", "")
+  Window.DM:add("contact5", ColumnContacts.items[5], "text", "")
+end
 
 --#endregion
 

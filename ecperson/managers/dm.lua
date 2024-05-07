@@ -1,17 +1,15 @@
 local ui = require("ui")
 
 -- Defines a data management module.
-local dm = {} -- version 1.0
+local dm = {} -- version 0.1
 
 -- Defines the data manager object.
 local DataManager = Object({})
 
 -- Creates the data manager constructor.
 function DataManager:constructor()
-  self.fields = {}
-  self.values = {}
   self.children = {}
-  self.key = nil
+  self.key = -1
 end
 
 -- Adds a field, widget and property.
@@ -27,30 +25,22 @@ function DataManager:add(field, widget, property, default)
   table.insert(self.children, newChild)
 end
 
--- XY.
--- apply() -> none
-function DataManager:apply()
-  self.fields = {}
-  self.values = {}
-
-  for _, child in pairs(self.children) do
-    table.insert(self.fields, child.field)
-    table.insert(self.values, child.widget[child.property])
-  end
-end
-
--- ok
+-- Sets default value to all widgets property.
+-- clear() -> none
 function DataManager:clear()
   for _, child in ipairs(self.children) do
     child.widget[child.property] = child.default
   end
+
+  self.key = -1
 end
 
--- ok
-function DataManager:select(database, name, record)
-  local query = "SELECT * FROM " .. name .. " ORDER BY id ASC LIMIT 1 OFFSET " .. record .. ";"
+-- Select a row of the table.
+-- select(database: object, tablename: string, record: number) -> none
+function DataManager:select(database, tablename, record)
+  local statement = string.format("SELECT * FROM %s ORDER BY id ASC LIMIT 1 OFFSET %d;", tablename, record)
 
-  local row = database:exec(query)
+  local row = database:exec(statement)
 
   for _, child in ipairs(self.children) do
     child.widget[child.property] = row[child.field]
@@ -59,10 +49,10 @@ function DataManager:select(database, name, record)
   self.key = row["id"]
 end
 
+-- Select one row of the table.
+-- select_one(database: object, tablename: string) -> none
 function DataManager:selectone(database, tablename)
-  local statement = "SELECT * FROM " .. tablename .. " "
-  statement = statement .. "WHERE id = " .. self.key .. ";"
-
+  local statement = string.format("SELECT * FROM %s WHERE id = %d;", tablename, self.key)
   local row = database:exec(statement)
 
   for _, child in ipairs(self.children) do
@@ -70,12 +60,10 @@ function DataManager:selectone(database, tablename)
   end
 end
 
--- Insert a row to the table.
--- insert(database: object, tablename: string) -> none
+-- Select the first row of the table.
+-- selectFirst(database: object, tablename: string) -> none
 function DataManager:selectfirst(database, tablename)
-  local statement = "SELECT * FROM " .. tablename .. " "
-  statement = statement .. "ORDER BY id ASC LIMIT 1;"
-
+  local statement = string.format("SELECT * FROM %s ORDER BY id ASC LIMIT 1;", tablename)
   local row = database:exec(statement)
 
   for _, child in ipairs(self.children) do
@@ -85,12 +73,10 @@ function DataManager:selectfirst(database, tablename)
   self.key = row["id"]
 end
 
--- Insert a row to the table.
--- insert(database: object, tablename: string) -> none
+-- Select the last row of the table.
+-- selectLast(database: object, tablename: string) -> none
 function DataManager:selectlast(database, tablename)
-  local statement = "SELECT * FROM " .. tablename .. " "
-  statement = statement .. "ORDER BY id DESC LIMIT 1;"
-
+  local statement = string.format("SELECT * FROM %s ORDER BY id DESC LIMIT 1;", tablename)
   local row = database:exec(statement)
 
   for _, child in ipairs(self.children) do
@@ -100,12 +86,19 @@ function DataManager:selectlast(database, tablename)
   self.key = row["id"]
 end
 
--- Insert a row to the table.
--- insert(database: object, tablename: string) -> none
 function DataManager:insert(database, tablename)
-  local statement = "INSERT INTO " .. tablename .. " "
-  statement = statement .. "(" .. table.concat(self.fields, ", ") .. ") "
-  statement = statement .. "VALUES('" .. table.concat(self.values, "', '") .. "');"
+  local fields = {}
+  local values = {}
+
+  for _, child in ipairs(self.children) do
+    table.insert(fields, child.field)
+    table.insert(values, "'" .. child.widget[child.property] .. "'")
+  end
+
+  local fieldStr = table.concat(fields, ", ")
+  local valueStr = table.concat(values, ", ")
+
+  local statement = string.format("INSERT INTO %s (%s) VALUES (%s);", tablename, fieldStr, valueStr)
 
   database:exec(statement)
 end
@@ -113,11 +106,15 @@ end
 -- Update a row from the table.
 -- update(database: object, tablename: string) -> none
 function DataManager:update(database, tablename)
-  local statement = "UPDATE " .. tablename .. " SET "
+  local updates = {}
+
   for _, child in ipairs(self.children) do
-    statement = statement .. child.field .. " = '" .. child.widget[child.property] .. "', "
+    table.insert(updates, child.field .. " = '" .. child.widget[child.property] .. "'")
   end
-  statement = string.sub(statement, 1, -3)
+
+  local updateString = table.concat(updates, ", ")
+
+  local statement = string.format("UPDATE %s SET %s WHERE id = %d", tablename, updateString, self.key)
 
   database:exec(statement)
 end
@@ -125,9 +122,7 @@ end
 -- Delete a row from the table.
 -- delete(database: object, tablename: string) -> none
 function DataManager:delete(database, tablename)
-  local statement = "DELETE FROM " .. tablename .. " "
-  statement = statement .. "WHERE id = " .. self.key .. ";"
-
+  local statement = string.format("DELETE FROM %s WHERE id = %d;", tablename, self.key)
   database:exec(statement)
 end
 
