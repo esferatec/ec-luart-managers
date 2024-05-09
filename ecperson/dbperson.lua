@@ -1,10 +1,8 @@
-require("common.extension")
-
 local sqlite = require("sqlite")
 
 local app = require("resources.app")
 
-local Person = sqlite.Database(app.DATABASE.name)
+local Person = sqlite.Database(app.DATABASE.fullpath)
 
 Person.table = "tbl_person"
 Person.record = nil
@@ -33,11 +31,11 @@ function Person:create()
   );]])
 end
 
-function Person:save(path)
-  if not isstring(path) then return end
-  if string.trim(path) == "" then return end
-  self:exec("VACUUM main INTO '" .. path .. "';")
-end
+--function Person:save(path)
+--  if not isstring(path) then return end
+--  if string.trim(path) == "" then return end
+--  self:exec("VACUUM main INTO '" .. path .. "';")
+--end
 
 function Person:count()
   local statment = string.format("SELECT COUNT(*) as count FROM %s;", self.table)

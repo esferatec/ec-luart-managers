@@ -24,7 +24,7 @@ app.SETTINGS = {
 }
 
 app.DATABASE = {
-  name = ":memory:",
+  fullpath = ":memory:",
   type = ".ecperson"
 }
 

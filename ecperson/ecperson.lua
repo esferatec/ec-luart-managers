@@ -5,7 +5,7 @@ local sqlite = require("sqlite")
 
 local app    = require("resources.app")
 
-if not app.ARGUMENT then
+if app.ARGUMENT == nil then
   local file = ui.savedialog("Create ecPerson File", false, "ecPerson file (*.ecperson)|*.ecperson")
 
   if not file then
@@ -21,13 +21,13 @@ if not app.ARGUMENT then
   end
 end
 
-if app.ARGUMENT then
+if app.ARGUMENT ~= nil then
   if not string.find(app.ARGUMENT, app.DATABASE.type) then
     ui.error("This file type is not supported.", app.NAME)
     sys.exit()
   end
 
-  app.DATABASE.name = app.ARGUMENT -- in fullpath umbennene analog file
+  app.DATABASE.fullpath = app.ARGUMENT
 end
 
 if not app.SETTINGS.file.exists then

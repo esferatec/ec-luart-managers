@@ -1,5 +1,3 @@
-local ui = require("ui")
-
 -- Defines a data management module.
 local dm = {} -- version 0.1
 

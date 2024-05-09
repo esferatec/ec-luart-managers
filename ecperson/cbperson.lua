@@ -1,5 +1,3 @@
-require("common.extension")
-
 local json         = require("json")
 local sys          = require("sys")
 local sysextension = require("modules.sysextension")
@@ -36,20 +34,20 @@ end
 --#region window methods
 
 function win:updatetitle()
-  self.title = app.NAME .. " - " .. app.DATABASE.name
+  self.title = app.NAME .. " - " .. app.DATABASE.fullpath
 end
 
 function win:updatestatus()
   self:status(" ")
 
-  if db.record then
+  if db.record ~= nil then
     local text = string.format(win.LM:translate("statustext"), db.record, db.total)
     self:status(text)
   end
 end
 
 function win:updatewidget()
-  if not db.record then
+  if db.record == nil then
     win.WM_ZERO:disable()
   else
     win.WM_ZERO:enable()
@@ -102,29 +100,29 @@ function win.MM.children.BurgerGerman:onClick()
 end
 
 function win.MM.children.BurgerSetup:onClick()
-  local success, message = nil, nil
+  local succeeded, message = nil, nil
 
   local title = app.NAME .. " - " .. win.LM:translate("Setup")
 
   local index = uidialogs.choiceindexdialog(win, title, win.LM:translate("Action"), win.LM:translate("Options"))
 
   if index == 1 then
-    success, message = pcall(sysextension.shortcut.create, sysextension.specialfolders.startmenu, app.TITLE, app.PATH)
+    succeeded, message = pcall(sysextension.shortcut.create, sysextension.specialfolders.startmenu, app.TITLE, app.PATH)
   end
 
   if index == 2 then
-    success, message = pcall(sysextension.shortcut.create, sysextension.specialfolders.desktop, app.TITLE, app.PATH)
+    succeeded, message = pcall(sysextension.shortcut.create, sysextension.specialfolders.desktop, app.TITLE, app.PATH)
   end
 
   if index == 3 then
-    success, message = pcall(sysextension.shortcut.delete, sysextension.specialfolders.startmenu, app.TITLE)
+    succeeded, message = pcall(sysextension.shortcut.delete, sysextension.specialfolders.startmenu, app.TITLE)
   end
 
   if index == 4 then
-    success, message = pcall(sysextension.shortcut.delete, sysextension.specialfolders.desktop, app.TITLE)
+    succeeded, message = pcall(sysextension.shortcut.delete, sysextension.specialfolders.desktop, app.TITLE)
   end
 
-  if index and not success then
+  if index == nil and not succeeded then
     ui.info(message, app.NAME)
   end
 end
@@ -151,7 +149,7 @@ end
 --#region button events
 
 function win.WM.children.ButtonFirst:onClick()
-  if not db.record then return end
+  if db.record ==nil then return end
 
   db.record = 1
 
@@ -161,7 +159,7 @@ function win.WM.children.ButtonFirst:onClick()
 end
 
 function win.WM.children.ButtonPrevious:onClick()
-  if not db.record then return end
+  if db.record == nil then return end
   if db.record <= 1 then return end
 
   db.record = db.record - 1
@@ -171,8 +169,8 @@ function win.WM.children.ButtonPrevious:onClick()
   win:updatestatus()
 end
 
-function win.WM.children.ButtonFilter:onClick()
-  if not db.record then return end
+function win.WM.children.ButtonGoto:onClick()
+  if db.record == nil then return end
 
   local items = db:list()
 
@@ -180,7 +178,7 @@ function win.WM.children.ButtonFilter:onClick()
 
   local index = uidialogs.choiceindexdialog(win, title, win.LM:translate("Action"), items, nil, 400)
 
-  if index then
+  if index ~= nil then
     db.record = index
 
     win:updatedata()
@@ -189,7 +187,7 @@ function win.WM.children.ButtonFilter:onClick()
 end
 
 function win.WM.children.ButtonNext:onClick()
-  if not db.record then return end
+  if db.record == nil then return end
   if db.record >= db.total then return end
 
   db.record = db.record + 1
@@ -200,7 +198,7 @@ function win.WM.children.ButtonNext:onClick()
 end
 
 function win.WM.children.ButtonLast:onClick()
-  if not db.record then return end
+  if db.record == nil then return end
 
   db.record = db.total
 
@@ -210,7 +208,7 @@ function win.WM.children.ButtonLast:onClick()
 end
 
 function win.WM.children.ButtonNew:onClick()
-  if not db.record then return end
+  if db.record == nil then return end
 
   db.record = nil
 
@@ -258,7 +256,7 @@ function win.WM.children.ButtonCancel:onClick() -- überprüfen?
 end
 
 function win.WM.children.ButtonDelete:onClick()
-  if not db.record then return end
+  if db.record == nil then return end
 
   win.DM:delete(db, db.table)
 
@@ -316,10 +314,10 @@ function win:onShow()
   db.total = db:count()
   db.record = (db.total ~= 0 and 1) or nil
 
-  win:updatedata()
   win:updatetitle()
-  win:updatestatus()
+  win:updatedata()
   win:updatewidget()
+  win:updatestatus()
 end
 
 function win:onKey(key)
