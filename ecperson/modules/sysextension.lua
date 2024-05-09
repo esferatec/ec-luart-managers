@@ -5,13 +5,7 @@ local sysextension = {}
 
 --#region specialfolders
 
--- Gets the special folder full path.
-local function getSpecialFolderPath(csidl)
-  local WshShell = sys.COM("Shell.Application")
-  return WshShell:NameSpace(csidl).self.path
-end
-
--- Constants identify special folders.
+-- Constant identify special folders.
 local CSIDL = {
   appdata = 0x001a,
   commonappdata = 0x0023,
@@ -38,6 +32,12 @@ local CSIDL = {
   windows = 0x0024,
 }
 
+-- Get the special folder full path.
+local function getSpecialFolderPath(csidl)
+  local WshShell = sys.COM("Shell.Application")
+  return WshShell:NameSpace(csidl).self.path
+end
+
 -- Get a proxy table representing special folders.
 sysextension.specialfolders = {
   desktop = getSpecialFolderPath(CSIDL.desktop),
@@ -55,7 +55,7 @@ sysextension.specialfolders = {
 
 sysextension.shortcut = {}
 
--- Creates a shortcut in the specified folder.
+-- Create a shortcut in the specified folder.
 function sysextension.shortcut.create(folder, name, target)
   local shellObject = sys.COM("WScript.Shell")
 
@@ -66,7 +66,7 @@ function sysextension.shortcut.create(folder, name, target)
   shortcutFile:Save()
 end
 
--- Deletes a shortcut from the specified folder.
+-- Delete a shortcut from the specified folder.
 function sysextension.shortcut.delete(folder, name)
   local shortcutFile = sys.File(folder .. "\\" .. name .. ".lnk")
 
@@ -77,46 +77,49 @@ end
 
 --#endregion
 
---#region fileformat
+--#region filetype
 
-sysextension.fileformat = {}
+sysextension.filetype = {}
 
 local ROOT = "HKEY_CURRENT_USER"
 local KEY = "Software\\Classes\\"
-local SUFFIX = "ecperson"
-local EXE = "\\ecperson.exe"
-local ICON = "ecperson\\DefaultIcon"
-local COMMAND = "ectask\\shell\\open\\command"
+local ICON = "\\DefaultIcon"
+local COMMAND = "\\shell\\open\\command"
 
-function sysextension.fileformat.remove()
-  sys.registry.delete(ROOT, KEY .. "." .. SUFFIX)
-  sys.registry.delete(ROOT, KEY .. SUFFIX)
-  sys.registry.delete(ROOT, KEY .. ICON)
-  sys.registry.delete(ROOT, KEY .. COMMAND)
+
+function sysextension.filetype.add(path, name)
+  path = string.lower(path)
+  name = string.lower(name)
+
+  sys.registry.write(ROOT, KEY .. "." .. name, nil, name);
+  sys.registry.write(ROOT, KEY .. name, nil, name .. " application");
+  sys.registry.write(ROOT, KEY .. name .. "\\DefaultIcon", nil, path .. name .. ".exe,-102");
+  sys.registry.write(ROOT, KEY .. name .. "\\shell\\open\\command", nil, '"' .. path .. name .. '.exe" "%1"');
 end
 
-function sysextension.fileformat.add(folder, application)
-  sys.registry.write(ROOT, KEY .. "." .. SUFFIX, nil, SUFFIX)
-  sys.registry.write(ROOT, KEY .. SUFFIX, nil, SUFFIX)
-  sys.registry.write(ROOT, KEY .. ICON, nil, folder .. EXE .. ",0")
-  sys.registry.write(ROOT, KEY .. COMMAND, nil, '"' .. folder .. EXE .. '" "%1"')
+function sysextension.filetype.remove(name)
+  name = string.lower(name)
+
+  sys.registry.delete(ROOT, KEY .. "." .. name)
+  sys.registry.delete(ROOT, KEY .. name)
+  sys.registry.delete(ROOT, KEY .. name .. "\\DefaultIcon")
+  sys.registry.delete(ROOT, KEY .. name .. "\\shell\\open\\command")
 end
 
 --#endregion
 
---#region
+--#region miscellaneous
 
--- Adds a file to the most recently used list.
+-- Add a file to the most recently used list.
 function sysextension.addtorecent(file)
   local WshShell = sys.COM("Shell.Application")
-  --WshShell:AddToRecent(file)
-  --WshShell:FileRun()
-  --WshShell:SearchCommand()
-  --WshShell:TrayProperties()
+  WshShell:AddToRecent(file)
 end
 
+--WshShell:FileRun()
+--WshShell:SearchCommand()
+--WshShell:TrayProperties()
+
 --#endregion
-
-
 
 return sysextension

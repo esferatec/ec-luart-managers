@@ -104,25 +104,33 @@ function win.MM.children.BurgerSetup:onClick()
 
   local title = app.NAME .. " - " .. win.LM:translate("Setup")
 
-  local index = uidialogs.choiceindexdialog(win, title, win.LM:translate("Action"), win.LM:translate("Options"))
+  local index = uidialogs.choiceindexdialog(win, title, win.LM:translate("Action"), win.LM:translate("Options"), nil, 250)
 
   if index == 1 then
-    succeeded, message = pcall(sysextension.shortcut.create, sysextension.specialfolders.startmenu, app.TITLE, app.PATH)
+    succeeded, message = pcall(sysextension.shortcut.create, sysextension.specialfolders.startmenu, app.NAME, app.FILE.path)
   end
 
   if index == 2 then
-    succeeded, message = pcall(sysextension.shortcut.create, sysextension.specialfolders.desktop, app.TITLE, app.PATH)
+    succeeded, message = pcall(sysextension.shortcut.create, sysextension.specialfolders.desktop, app.NAME, app.FILE.path)
   end
 
   if index == 3 then
-    succeeded, message = pcall(sysextension.shortcut.delete, sysextension.specialfolders.startmenu, app.TITLE)
+    succeeded, message = pcall(sysextension.filetype.add, app.FILE.path, app.NAME)
   end
 
   if index == 4 then
-    succeeded, message = pcall(sysextension.shortcut.delete, sysextension.specialfolders.desktop, app.TITLE)
+    succeeded, message = pcall(sysextension.shortcut.delete, sysextension.specialfolders.startmenu, app.NAME)
   end
 
-  if index == nil and not succeeded then
+  if index == 5 then
+    succeeded, message = pcall(sysextension.shortcut.delete, sysextension.specialfolders.desktop, app.NAME)
+  end
+
+  if index == 6 then
+    succeeded, message = pcall(sysextension.filetype.remove, app.NAME)
+  end
+
+  if index ~= nil and not succeeded then
     ui.info(message, app.NAME)
   end
 end

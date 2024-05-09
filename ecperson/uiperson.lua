@@ -269,7 +269,7 @@ Window.DM:add("street", EntryStreet, "text", "")
 Window.DM:add("city", EntryCity, "text", "")
 Window.DM:add("postalcode", EntryPostalCode, "text", "")
 Window.DM:add("state", EntryState, "text", "")
-Window.DM:add("country", EntryCountry, "text", "Deutschland")
+Window.DM:add("country", EntryCountry, "text", "")
 Window.DM:add("note", EditNote, "text", "")
 
 --#endregion

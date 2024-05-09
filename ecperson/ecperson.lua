@@ -6,7 +6,7 @@ local sqlite = require("sqlite")
 local app    = require("resources.app")
 
 if app.ARGUMENT == nil then
-  local file = ui.savedialog("Create ecPerson File", false, "ecPerson file (*.ecperson)|*.ecperson")
+  local file = ui.savedialog("Create / Open ecPerson File", false, "ecPerson file (*.ecperson)|*.ecperson")
 
   if not file then
     sys.exit()

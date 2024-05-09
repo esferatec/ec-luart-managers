@@ -42,8 +42,10 @@ dic.english = {
   ["Options"] = {
     "create startmenu shortcut",
     "create desktop shortcut",
+    "create file type association",
     "delete startmenu shortcut",
-    "delete desktop shortcut" },
+    "delete desktop shortcut",
+    "delete file type association" },
 }
 
 dic.German_Germany = "German_Germany"
@@ -88,8 +90,10 @@ dic.german = {
   ["Options"] = {
     "Startmenü-Verknüpfung erstellen",
     "Desktop-Verknüpfung erstellen",
+    "Dateityp-Zuordnung erstellen",
     "Startmenü-Verknüpfung löschen",
-    "Desktop-Verknüpfung löschen" },
+    "Desktop-Verknüpfung löschen",
+    "Dateityp-Zuordnung löschen" },
 }
 
 return dic
