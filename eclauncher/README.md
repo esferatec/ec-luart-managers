@@ -2,8 +2,7 @@
 
 This is a launcher application for the other applications in this repository. It shows the capabilities of the different managers of this repository.
 
-[![Lua 5.4.6](https://badgen.net/badge/Lua/5.4.6/yellow)](https://github.com/lua/lua)
-[![LuaRT 1.7.1](https://badgen.net/badge/LuaRT/1.7.1/blue)](https://github.com/samyeyo/LuaRT)
+[![LuaRT 1.8.0](https://badgen.net/badge/LuaRT/1.8.0/blue)](https://github.com/samyeyo/LuaRT)
 
 ![Screenshot](README01.png)
 
