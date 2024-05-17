@@ -5,8 +5,7 @@ You can create an address management file in any directory. In this file, you ca
 This programme is designed to manage a small, limited number of addresses.
 It stores the addresses in a SQLite database.
 
-[![Lua 5.4.6](https://badgen.net/badge/Lua/5.4.6/yellow)](https://github.com/lua/lua)
-[![LuaRT 1.7.1](https://badgen.net/badge/LuaRT/1.7.1/blue)](https://github.com/samyeyo/LuaRT)
+[![LuaRT 1.8.0](https://badgen.net/badge/LuaRT/1.8.0/blue)](https://github.com/samyeyo/LuaRT)
 
 ![Screenshot](README01.png)
 
