@@ -53,8 +53,8 @@ local ButtonApplication12 = ui.Button(Window, "12")
 --#region WidgetManager
 
 Window.WM:add(ButtonApplication01, "ButtonApplication01")
+Window.WM:add(ButtonApplication02, "ButtonApplication02")
 
-Window.WM_DISABLED:add(ButtonApplication02, "ButtonApplication02")
 Window.WM_DISABLED:add(ButtonApplication03, "ButtonApplication03")
 Window.WM_DISABLED:add(ButtonApplication04, "ButtonApplication04")
 Window.WM_DISABLED:add(ButtonApplication05, "ButtonApplication05")

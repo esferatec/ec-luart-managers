@@ -1,6 +1,6 @@
-local ui   = require("ui")
-local sys  = require("sys")
 local json = require("json")
+local sys  = require("sys")
+local ui   = require("ui")
 
 local app  = require("resources.app")
 

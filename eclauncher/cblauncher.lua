@@ -1,12 +1,11 @@
+local json      = require("json")
+local sys       = require("sys")
+local sysext    = require("modules.sysextension")
 local ui        = require("ui")
 local uidialogs = require("modules.uidialogs")
 
-local sys       = require("sys")
-local sysext    = require("modules.sysextension")
-local json      = require("json")
-
-local dic       = require("resources.dic")
 local app       = require("resources.app")
+local dic       = require("resources.dic")
 
 local win       = require("uilauncher")
 
@@ -100,6 +99,9 @@ function win.WM.children.ButtonApplication01:onClick()
   startApplication("ecperson")
 end
 
+function win.WM.children.ButtonApplication02:onClick()
+  startApplication("ectask")
+end
 --#endregion
 
 --#region window events
