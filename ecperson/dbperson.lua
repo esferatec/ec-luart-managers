@@ -31,12 +31,6 @@ function Person:create()
   );]])
 end
 
---function Person:save(path)
---  if not isstring(path) then return end
---  if string.trim(path) == "" then return end
---  self:exec("VACUUM main INTO '" .. path .. "';")
---end
-
 function Person:count()
   local statment = string.format("SELECT COUNT(*) as count FROM %s;", self.table)
   local result = self:exec(statment)

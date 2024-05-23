@@ -6,19 +6,20 @@ local sqlite = require("sqlite")
 local app    = require("resources.app")
 
 if app.ARGUMENT == nil then
-  local file = ui.savedialog("Create / Open ecPerson File", false, "ecPerson file (*.ecperson)|*.ecperson")
+  local selected = ui.savedialog("Create ecPerson File", false, "ecPerson file (*.ecperson)|*.ecperson")
 
-  if not file then
+  if not selected then
     sys.exit()
   end
 
-  if file.exists then
-    app.ARGUMENT = file.fullpath
-  else
-    local database = sqlite.Database(file)
-    app.ARGUMENT = database.file.fullpath
-    sqlite.Database.close(database)
+  if selected.exists then
+    ui.info("This file already exists", app.NAME)
+    sys.exit()
   end
+
+  local database = sqlite.Database(selected)
+  app.ARGUMENT = database.file.fullpath
+  sqlite.Database.close(database)
 end
 
 if app.ARGUMENT ~= nil then
