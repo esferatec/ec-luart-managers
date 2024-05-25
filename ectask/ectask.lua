@@ -13,7 +13,7 @@ if app.ARGUMENT == nil then
   end
 
   if selected.exists then
-    ui.info("This file already exists", app.NAME)
+    ui.info("This file already exists.", app.NAME)
     sys.exit()
   end
 

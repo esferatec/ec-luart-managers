@@ -1,22 +1,89 @@
-require("common.extension")
-
-local ui = require "ui"
-
 -- Defines a data management module.
-local dm = {} -- version 0.1
+local dm = {} -- version 1.0
+
+-- Checks if the parameter is a valid child widget.
+-- isValidChild(parameter: any) -> boolean
+local function isValidChild(parameter)
+  local invalidTypes = {
+    "nil",
+    "boolean",
+    "number",
+    "string",
+    "userdata",
+    "function",
+    "thread" }
+
+  return not table.concat(invalidTypes, ","):find(type(parameter))
+end
+
+-- Checks if the parameter is a string type.
+-- isString(parameter: any) -> boolean
+local function isString(parameter)
+  return type(parameter) == "string"
+end
+
+-- Checks if the parameter is a number type.
+-- isNumber(parameter: any) -> boolean
+local function isNumber(parameter)
+  return type(parameter) == "number"
+end
+
+-- Checks if the parameter is a nil type.
+-- isNil(parameter: any) -> boolean
+local function isNil(parameter)
+  return type(parameter) == "nil"
+end
+
+-- Checks if the parameter is a database type.
+-- isDatabase(parameter: any) -> boolean
+local function isDatabase(parameter)
+  return type(parameter) == "Database"
+end
 
 -- Defines the data manager object.
 local DataManager = Object({})
 
 -- Creates the data manager constructor.
 function DataManager:constructor()
+  local _database = {}
+
+  function self:set_database(value)
+    if not isDatabase(value) then
+      value = nil
+    end
+
+    _database = value
+  end
+
+  function self:get_database()
+    return _database
+  end
+
+  local _datatable = {}
+
+  function self:set_datatable(value)
+    if not isString(value) then
+      value = nil
+    end
+
+    _datatable = value
+  end
+
+  function self:get_datatable()
+    return _datatable
+  end
+
   self.children = {}
   self.key = -1
 end
 
--- Adds a field, widget and property.
+-- Adds a field, widget, property and default value.
 -- add(field: string, widget: object, property: string) -> none
 function DataManager:add(field, widget, property, default)
+  if not isString(field) then return end
+  if not isValidChild(widget) then return end
+  if not isString(property) then return end
+
   local newChild = {
     field = field,
     widget = widget,
@@ -27,9 +94,9 @@ function DataManager:add(field, widget, property, default)
   table.insert(self.children, newChild)
 end
 
--- Sets default value to all widgets property.
--- clear() -> none
-function DataManager:clear()
+-- Sets default value for each widget.
+-- apply() -> none
+function DataManager:apply()
   for _, child in ipairs(self.children) do
     child.widget[child.property] = child.default
   end
@@ -37,63 +104,40 @@ function DataManager:clear()
   self.key = -1
 end
 
--- Select a row of the table.
--- select(database: object, tablename: string, record: number) -> none
-function DataManager:select(database, tablename, record)
-  local statement = string.format("SELECT * FROM %s ORDER BY id ASC LIMIT 1 OFFSET %d;", tablename, record)
+-- Selects a row of the table.
+-- select(record: number) -> none
+function DataManager:select(record)
+  if not isnumber(record) then return end
 
-  local row = database:exec(statement)
+  local statement = string.format("SELECT * FROM %s ORDER BY id ASC LIMIT 1 OFFSET %d;", self.datatable, record)
+
+  local row = self.database:exec(statement)
 
   for _, child in ipairs(self.children) do
- 
     if isboolean(child.widget[child.property]) then
-        child.widget[child.property] = toboolean(row[child.field])
-    else
-    child.widget[child.property] = row[child.field]
-  end
-  end
+      child.widget[child.property] = toboolean(row[child.field])
+      goto nextchild
+    end
 
-  self.key = row["id"]
-end
+    if isstring(child.widget[child.property]) then
+      child.widget[child.property] = tostring(row[child.field])
+      goto nextchild
+    end
 
--- Select one row of the table.
--- select_one(database: object, tablename: string) -> none
-function DataManager:selectone(database, tablename)
-  local statement = string.format("SELECT * FROM %s WHERE id = %d;", tablename, self.key)
-  local row = database:exec(statement)
+    if isnumber(child.widget[child.property]) then
+      child.widget[child.property] = tonumber(row[child.field])
+      goto nextchild
+    end
 
-  for _, child in ipairs(self.children) do
-    child.widget[child.property] = row[child.field]
-  end
-end
-
--- Select the first row of the table.
--- selectFirst(database: object, tablename: string) -> none
-function DataManager:selectfirst(database, tablename)
-  local statement = string.format("SELECT * FROM %s ORDER BY id ASC LIMIT 1;", tablename)
-  local row = database:exec(statement)
-
-  for _, child in ipairs(self.children) do
-    child.widget[child.property] = row[child.field]
+    ::nextchild::
   end
 
   self.key = row["id"]
 end
 
--- Select the last row of the table.
--- selectLast(database: object, tablename: string) -> none
-function DataManager:selectlast(database, tablename)
-  local statement = string.format("SELECT * FROM %s ORDER BY id DESC LIMIT 1;", tablename)
-  local row = database:exec(statement)
-
-  for _, child in ipairs(self.children) do
-    child.widget[child.property] = row[child.field]
-  end
-
-  self.key = row["id"]
-end
-
-function DataManager:insert(database, tablename)
+-- Insert a record to the table.
+-- insert() -> none
+function DataManager:insert()
   local fields = {}
   local values = {}
 
@@ -105,34 +149,32 @@ function DataManager:insert(database, tablename)
   local fieldStr = table.concat(fields, ", ")
   local valueStr = table.concat(values, ", ")
 
-  ui.info(valueStr)
+  local statement = string.format("INSERT INTO %s (%s) VALUES (%s);", self.datatable, fieldStr, valueStr)
 
-  local statement = string.format("INSERT INTO %s (%s) VALUES (%s);", tablename, fieldStr, valueStr)
-
-  database:exec(statement)
+  self.database:exec(statement)
 end
 
 -- Update a row from the table.
--- update(database: object, tablename: string) -> none
-function DataManager:update(database, tablename)
+-- update() -> none
+function DataManager:update()
   local updates = {}
 
   for _, child in ipairs(self.children) do
-    table.insert(updates, child.field .. " = '" .. child.widget[child.property] .. "'")
+    table.insert(updates, child.field .. " = '" .. tostring(child.widget[child.property]) .. "'")
   end
 
   local updateString = table.concat(updates, ", ")
 
-  local statement = string.format("UPDATE %s SET %s WHERE id = %d", tablename, updateString, self.key)
+  local statement = string.format("UPDATE %s SET %s WHERE id = %d", self.datatable, updateString, self.key)
 
-  database:exec(statement)
+  self.database:exec(statement)
 end
 
 -- Delete a row from the table.
--- delete(database: object, tablename: string) -> none
-function DataManager:delete(database, tablename)
-  local statement = string.format("DELETE FROM %s WHERE id = %d;", tablename, self.key)
-  database:exec(statement)
+-- delete() -> none
+function DataManager:delete()
+  local statement = string.format("DELETE FROM %s WHERE id = %d;", self.datatable, self.key)
+  self.database:exec(statement)
 end
 
 -- Initializes a new data manager instance.

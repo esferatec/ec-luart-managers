@@ -76,6 +76,9 @@ local ButtonDelete   = ui.Button(Window, "Delete", 0, 0, 75, 34)
 --#region WidgetManager
 
 Window.WM:add(EntrySubject, "EntrySubject")
+Window.WM:add(ColumnTasks1, "ColumnTasks1")
+Window.WM:add(ColumnTasks2, "ColumnTasks2")
+Window.WM:add(EditNote, "EditNote")
 Window.WM:add(ButtonFirst, "ButtonFirst")
 Window.WM:add(ButtonPrevious, "ButtonPrevious")
 Window.WM:add(ButtonGoto, "ButtonGoto")
@@ -134,7 +137,7 @@ Window.LM:add(MenuBurger.items[5], "text", "Help")
 Window.LM:add(MenuBurger.items[6], "text", "About")
 Window.LM:add(MenuBurger.items[7], "text", "Exit")
 
-Window.LM:add(LabelSubject, "text", "LabelSubject")
+Window.LM:add(LabelSubject, "text", "Subject")
 
 Window.LM:add(ButtonFirst, "tooltip", "FirstRecord")
 Window.LM:add(ButtonPrevious, "tooltip", "PreviousRecord")
@@ -195,9 +198,11 @@ Window.VM:add(EntrySubject, "text", isRequired, "SubjectRequired")
 
 --#region DataManager
 
-function EntrySubject:onCreate()
-  Window.DM:add("subject", EntrySubject, "text", "")
-end
+Window.DM:add("subject", EntrySubject, "text", "")
+
+--#endregion
+
+--#region Events
 
 function ColumnTasks1:onCreate()
   super(self).onCreate(self)
