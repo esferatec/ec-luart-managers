@@ -28,16 +28,30 @@ local function isNumber(parameter)
   return type(parameter) == "number"
 end
 
--- Checks if the parameter is a nil type.
--- isNil(parameter: any) -> boolean
-local function isNil(parameter)
-  return type(parameter) == "nil"
+-- Checks if the parameter is a boolean type.
+-- isBoolean(parameter: any) -> boolean
+local function isBoolean(parameter)
+  return type(parameter) == "boolean"
 end
 
 -- Checks if the parameter is a database type.
 -- isDatabase(parameter: any) -> boolean
 local function isDatabase(parameter)
   return type(parameter) == "Database"
+end
+
+-- Conparameterert a number or string to boolean
+-- toboolean(parameter: any) -> boolean
+local function toboolean(parameter)
+  if isNumber(parameter) then
+    return parameter ~= 0
+  end
+
+  if isString(parameter) then
+    return parameter:lower() == "true"
+  end
+
+  return false
 end
 
 -- Defines the data manager object.
@@ -107,24 +121,24 @@ end
 -- Selects a row of the table.
 -- select(record: number) -> none
 function DataManager:select(record)
-  if not isnumber(record) then return end
+  if not isNumber(record) then return end
 
   local statement = string.format("SELECT * FROM %s ORDER BY id ASC LIMIT 1 OFFSET %d;", self.datatable, record)
 
   local row = self.database:exec(statement)
 
   for _, child in ipairs(self.children) do
-    if isboolean(child.widget[child.property]) then
+    if isBoolean(child.widget[child.property]) then
       child.widget[child.property] = toboolean(row[child.field])
       goto nextchild
     end
 
-    if isstring(child.widget[child.property]) then
+    if isString(child.widget[child.property]) then
       child.widget[child.property] = tostring(row[child.field])
       goto nextchild
     end
 
-    if isnumber(child.widget[child.property]) then
+    if isNumber(child.widget[child.property]) then
       child.widget[child.property] = tonumber(row[child.field])
       goto nextchild
     end
@@ -135,7 +149,7 @@ function DataManager:select(record)
   self.key = row["id"]
 end
 
--- Insert a record to the table.
+-- Insert a record to the database table.
 -- insert() -> none
 function DataManager:insert()
   local fields = {}
@@ -154,7 +168,7 @@ function DataManager:insert()
   self.database:exec(statement)
 end
 
--- Update a row from the table.
+-- Update a record of the database table.
 -- update() -> none
 function DataManager:update()
   local updates = {}
@@ -170,7 +184,7 @@ function DataManager:update()
   self.database:exec(statement)
 end
 
--- Delete a row from the table.
+-- Delete a record from the database table.
 -- delete() -> none
 function DataManager:delete()
   local statement = string.format("DELETE FROM %s WHERE id = %d;", self.datatable, self.key)
