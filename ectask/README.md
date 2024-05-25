@@ -1,9 +1,9 @@
-# ecPerson
+# ecTask
 
-This is a small and easy to use application for managing persons.
-You can create an person management file in any directory. In this file, you can store the necessary details for each person.
-This programme is designed to manage a small, limited number of persons.
-It stores the addresses in a SQLite database.
+This is a small and easy to use application for managing tasks.
+You can create an task management file in any directory. In this file, you can store the necessary details for each task.
+This application is designed to manage a small, limited number of tasks.
+It stores the tasks in a SQLite database.
 
 [![LuaRT 1.8.0](https://badgen.net/badge/LuaRT/1.8.0/blue)](https://github.com/samyeyo/LuaRT)
 
