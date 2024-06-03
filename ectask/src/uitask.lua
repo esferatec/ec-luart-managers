@@ -199,6 +199,7 @@ Window.VM:add(EntrySubject, "text", isRequired, "SubjectRequired")
 --#region DataManager
 
 Window.DM:add("subject", EntrySubject, "text", "")
+Window.DM:add("note", EditNote, "text", "")
 
 --#endregion
 
