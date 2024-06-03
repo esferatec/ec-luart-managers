@@ -9,7 +9,7 @@ local dic          = require("resources.dic")
 
 --#region win initialization
 
-local win          = require("uitask")
+local win = require("uitask")
 win:center()
 win:status()
 
@@ -53,10 +53,10 @@ function win:updatewidget()
     win.WM_ZERO:enable()
   end
 
-  win.WM:focus("EntrySubject")
+  --win.WM:focus("EntrySubject")
 end
 
-function win:updatedata() -- optimierung bei new, save, cancel
+function win:updatedata()
   if db.total == 0 or db.record == nil then
     db.record = nil
     win.DM:apply()
@@ -107,13 +107,11 @@ function win.MM.children.BurgerSetup:onClick()
   local index = uidialogs.choiceindexdialog(win, title, win.LM:translate("Action"), win.LM:translate("Options"), nil, 250)
 
   if index == 1 then
-    succeeded, message = pcall(sysextension.shortcut.create, sysextension.specialfolders.startmenu, app.NAME,
-      app.FILE.path)
+    succeeded, message = pcall(sysextension.shortcut.create, sysextension.specialfolders.startmenu, app.NAME, app.FILE.path)
   end
 
   if index == 2 then
-    succeeded, message = pcall(sysextension.shortcut.create, sysextension.specialfolders.desktop, app.NAME, app.FILE
-    .path)
+    succeeded, message = pcall(sysextension.shortcut.create, sysextension.specialfolders.desktop, app.NAME, app.FILE.path)
   end
 
   if index == 3 then
