@@ -1,5 +1,5 @@
 -- Defines a key management module.
-local km = {} -- version 1.1
+local km = {} -- version 2024.01
 
 -- Defines specific constants.
 km.MODIFIERKEY = { Alt = "VK_MENU", Ctrl = "VK_CONTROL", Shift = "VK_SHIFT" }
@@ -23,6 +23,18 @@ end
 -- isString(parameter: any) -> boolean
 local function isString(parameter)
   return type(parameter) == "string"
+end
+
+-- Checks if the parameter is a function type.
+-- isFunction(parameter: any) -> boolean
+local function isFunction(parameter)
+  return type(parameter) == "function"
+end
+
+-- Checks if the parameter is a nil type.
+-- isNil(parameter: any) -> boolean
+local function isNil(parameter)
+  return type(parameter) == "nil"
 end
 
 -- Defines the key manager object.
@@ -68,7 +80,7 @@ function KeyManager:apply(key)
   end
 
   local child = self.children[gesture]
-  if child and type(child.onClick) == "function" and child.enabled then
+  if not isNil(child) and isFunction(child.onClick) and child.enabled then
     child:onClick()
   end
 

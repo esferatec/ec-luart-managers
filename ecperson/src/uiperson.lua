@@ -88,7 +88,7 @@ local EditNote           = ui.Edit(Window, "", 0, 0, 648, 150)
 
 local ButtonFirst        = ui.Button(Window, "|<", 0, 0, 55, 34)
 local ButtonPrevious     = ui.Button(Window, "<", 0, 0, 55, 34)
-local ButtonGoto       = ui.Button(Window, "(   )", 0, 0, 67, 34)
+local ButtonGoto         = ui.Button(Window, "(   )", 0, 0, 67, 34)
 local ButtonNext         = ui.Button(Window, ">", 0, 0, 55, 34)
 local ButtonLast         = ui.Button(Window, ">|", 0, 0, 55, 34)
 local ButtonNew          = ui.Button(Window, "New", 0, 0, 75, 34)

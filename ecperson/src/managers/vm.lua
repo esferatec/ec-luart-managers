@@ -1,5 +1,5 @@
 -- Defines a validation management module.
-local vm = {} -- version 2.0
+local vm = {} -- version 2025.04
 
 -- Checks if the parameter is a valid child widget.
 -- isValidChild(parameter: any) -> boolean
@@ -65,6 +65,7 @@ function ValidationManager:apply()
 
   for _, child in pairs(self.children) do
     local validationResult = child.rule(child.widget[child.property])
+
     if not validationResult then
       table.insert(self.message, child.message)
       self.isvalid = false

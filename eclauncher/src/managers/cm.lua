@@ -1,7 +1,5 @@
-local ui = require("ui")
-
 -- Defines a configuration management module.
-local cm = {} -- version 2.1
+local cm = {} -- version 2025.04
 
 -- Checks if the parameter is a valid child widget.
 -- isValidChild(parameter: any) -> boolean
@@ -79,6 +77,7 @@ end
 function ConfigurationManager:apply()
   for _, child in ipairs(self.children) do
     local settingValue = self.settings[child.key]
+
     if not isNil(settingValue) then
       child.widget[child.property] = settingValue
     end

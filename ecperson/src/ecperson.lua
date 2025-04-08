@@ -41,8 +41,8 @@ end
 
 dofile(embed and embed.File("cbperson.lua").fullpath or "cbperson.lua")
 
-if sys.error then
-  ui.error(sys.error, app.NAME)
-end
+--if sys.error then
+--  ui.error(sys.error, app.NAME)
+--end
 
 sys.exit()
