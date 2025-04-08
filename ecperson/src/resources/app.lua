@@ -3,8 +3,8 @@ local sys = require("sys")
 local app = {}
 
 app.NAME = "ecPerson"
-app.VERSION = "0.1.5"
-app.WEBSITE = "https://github.com/esferatec/ec-luart-managers"
+app.VERSION = "0.1.1"
+app.WEBSITE = "https://github.com/esferatec/ec-luart-managers/tree/main/ecperson"
 app.COPYRIGHT = "(c) 2025"
 app.DEVELOPER = "esferatec"
 

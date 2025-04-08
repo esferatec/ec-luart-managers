@@ -3,7 +3,7 @@
 This is a small and easy to use application for managing persons.
 You can create an person management file in any directory. In this file, you can store the necessary details for each person.
 This programme is designed to manage a small, limited number of persons.
-It stores the addresses in a SQLite database.
+It stores the information in a SQLite database.
 
 [![LuaRT 1.8.0](https://badgen.net/badge/LuaRT/1.8.0/blue)](https://github.com/samyeyo/LuaRT)
 

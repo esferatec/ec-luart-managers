@@ -332,7 +332,7 @@ function win:onKey(key)
   win.KM:apply(key)
 end
 
-function win:onHide()
+function win:onHide()  
   win.CM:save()
 
   local saved, message = pcall(json.save, app.SETTINGS.file, win.CM.settings)
@@ -340,6 +340,8 @@ function win:onHide()
   if not saved then
     ui.info(message, app.TITLE)
   end
+  
+  sys.exit()
 end
 
 --#endregion
