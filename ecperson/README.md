@@ -5,7 +5,7 @@ You can create an person management file in any directory. In this file, you can
 This programme is designed to manage a small, limited number of persons.
 It stores the information in a SQLite database.
 
-[![LuaRT 1.8.0](https://badgen.net/badge/LuaRT/1.8.0/blue)](https://github.com/samyeyo/LuaRT)
+[![LuaRT 1.9.5](https://badgen.net/badge/LuaRT/1.9.5/blue)](https://github.com/samyeyo/LuaRT)
 
 ![Screenshot](README01.png)
 
