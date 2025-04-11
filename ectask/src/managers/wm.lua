@@ -1,5 +1,5 @@
 -- Defines a widget management module.
-local wm = {} -- version 2.0
+local wm = {} -- version 2025.04
 
 -- Checks if the parameter is a valid child widget.
 -- isValidChild(parameter: any) -> boolean
@@ -34,10 +34,9 @@ local WidgetManager = Object({})
 -- Creates the widget manager constructor.
 function WidgetManager:constructor()
   self.children = {}
-  self.zorder = {}
 end
 
--- Adds a widget and sets the zindex.
+-- Adds a widget and name.
 -- add(widget: object, name: string) -> none
 function WidgetManager:add(widget, name)
   if not isValidChild(widget) then return end
@@ -45,26 +44,6 @@ function WidgetManager:add(widget, name)
   if name == "" then return end
 
   self.children[name] = widget
-
-  --if isNil(widget.zindex) then
-  -- widget.zindex = #self.zorder + 1
-  --end
-
-  --table.insert(self.zorder, widget.zindex, widget)
-end
-
--- Reorders the widgets based on their zindex.
--- reorder() -> none
-function WidgetManager:reorder()
-  table.sort(self.zorder, function(a, b) return a.zindex < b.zindex end)
-end
-
--- Places the widget in the given zindex order.
--- apply() -> none
-function WidgetManager:apply()
-  for _, widget in ipairs(self.zorder) do
-    widget:tofront()
-  end
 end
 
 -- Hides all child widgets.
