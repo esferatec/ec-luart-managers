@@ -3,9 +3,9 @@ local sys = require("sys")
 local app = {}
 
 app.NAME = "ecTask"
-app.VERSION = "0.1.0"
-app.WEBSITE = "https://github.com/esferatec/ec-luart-managers"
-app.COPYRIGHT = "(c) 2024"
+app.VERSION = "0.1.1"
+app.WEBSITE = "https://github.com/esferatec/ec-luart-managers/tree/main/ectask"
+app.COPYRIGHT = "(c) 2025"
 app.DEVELOPER = "esferatec"
 
 app.ARGUMENT = arg[1]

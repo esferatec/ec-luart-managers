@@ -53,18 +53,18 @@ function win:updatewidget()
     win.WM_ZERO:enable()
   end
 
-  --win.WM:focus("EntrySubject")
+  win.WM:focus("EntrySubject")
 end
 
 function win:updatedata()
   if db.total == 0 or db.record == nil then
     db.record = nil
-    win.DM:apply()
+    win.DM:clear()
     return
   end
 
   if db.total ~= 0 and db.record ~= nil then
-    win.DM:select(db.record - 1)
+    win.DM:select(db, db.table, db.record - 1)
     return
   end
 end
@@ -240,12 +240,12 @@ function win.WM.children.ButtonSave:onClick()
   end
 
   if win.DM.key == -1 then
-    win.DM:insert()
+    win.DM:insert(db, db.table)
 
     db.total = db:count()
     db.record = (db.total ~= 0 and db.total) or nil
   else
-    win.DM:update()
+    win.DM:update(db, db.table)
   end
 
   win:updatedata()
@@ -266,7 +266,7 @@ end
 function win.WM.children.ButtonDelete:onClick()
   if db.record == nil then return end
 
-  win.DM:delete()
+  win.DM:delete(db, db.table)
 
   db.total = db:count()
   db.record = (db.total ~= 0 and 1) or nil
@@ -281,12 +281,6 @@ end
 --#region window events
 
 function win:onCreate()
-  win.DM.database = db
-  win.DM.datatable = db.table
-
-  db.total = db:count()
-  db.record = (db.total ~= 0 and 1) or nil
-
   if app.SETTINGS.file.exists then
     local loaded, settings = pcall(json.load, app.SETTINGS.file)
 
@@ -320,8 +314,10 @@ function win:onShow()
   win.GM_TOOL:apply()
   win.CM:apply()
   win.LM:apply()
-  win.DM:apply()
 
+  db.total = db:count()
+  db.record = (db.total ~= 0 and 1) or nil
+  
   win:updatetitle()
   win:updatedata()
   win:updatewidget()
@@ -340,7 +336,10 @@ function win:onHide()
   if not saved then
     ui.info(message, app.TITLE)
   end
+
+  sys.exit()
 end
+
 
 --#endregion
 

@@ -40,9 +40,3 @@ if not app.SETTINGS.file.exists then
 end
 
 dofile(embed and embed.File("cbtask.lua").fullpath or "cbtask.lua")
-
-if sys.error then
-  ui.error(sys.error, app.NAME)
-end
-
-sys.exit()
