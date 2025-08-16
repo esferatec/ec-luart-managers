@@ -2,7 +2,7 @@
 
 This is a launcher application for other applications in this repository.
 
-[![LuaRT 1.9.5](https://badgen.net/badge/LuaRT/1.9.5/blue)](https://github.com/samyeyo/LuaRT)
+[![LuaRT 1.9.5](https://badgen.net/badge/LuaRT/2.0.0/blue)](https://github.com/samyeyo/LuaRT)
 
 ![Screenshot](README01.png)
 
