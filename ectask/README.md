@@ -5,7 +5,7 @@ You can create an task management file in any directory. In this file, you can s
 This application is designed to manage a small, limited number of tasks.
 It stores the tasks in a SQLite database.
 
-[![LuaRT 1.8.0](https://badgen.net/badge/LuaRT/1.8.0/blue)](https://github.com/samyeyo/LuaRT)
+[![LuaRT 1.8.0](https://badgen.net/badge/LuaRT/2.0.0/blue)](https://github.com/samyeyo/LuaRT)
 
 ![Screenshot](README01.png)
 
