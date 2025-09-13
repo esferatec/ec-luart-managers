@@ -1,6 +1,6 @@
 # ec-luart-managers
 
-This repository provides an overview of my self-programmed managers for easy development of LuaRT desktop applications. It also includes examples that demonstrate the capabilities and use of these manager modules.
+This repository provides an overview of my self-programmed manager modules.
 
 | Repository  | Description |
 | --- | --- |
