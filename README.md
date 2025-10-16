@@ -5,6 +5,7 @@ This repository provides an overview of my self-programmed manager modules.
 | Repository  | Description |
 | --- | --- |
 | [configurationmanager](https://github.com/esferatec/ec-luart-configurationmanager) | The project is a configuration management module written in Lua. It defines a ConfigurationManager object that handles configuration of widgets in LuaRT desktop applications. |
+| [datamanager](https://github.com/esferatec/ec-luart-datamanager) | The project is a data management module written in Lua. It defines a DataManger object that handles data of widgets in LuaRT desktop applications. |
 | [geometrymanager](https://github.com/esferatec/ec-luart-geometrymanager) | The project is a geometry management module written in Lua and LauRT. It defines a GeometryManager object that provides methods to initialize different layout instances for LuaRT desktop applications. |
 | [localizationmanager](https://github.com/esferatec/ec-luart-localizationmanager) | The project is a localization management module written in Lua. It defines a LocalizationManager object that handles localization of widgets in LuaRT desktop applications. |
 | [menumanager](https://github.com/esferatec/ec-luart-menumanager) | The project is a menu management module written in Lua. It defines a MenuManager object that contains methods for managing menus in LuaRT desktop applications. |
